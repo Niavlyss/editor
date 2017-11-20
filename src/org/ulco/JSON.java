@@ -1,18 +1,36 @@
 package org.ulco;
 
+import java.lang.reflect.Constructor;
+
 public class JSON {
     static public GraphicsObject parse(String json) {
         GraphicsObject o = null;
         String str = json.replaceAll("\\s+", "");
         String type = str.substring(str.indexOf("type") + 5, str.indexOf(","));
 
-        if (type.compareTo("square") == 0) {
-            o = new Square(str);
-        } else if (type.compareTo("rectangle") == 0) {
-            o = new Rectangle(str);
-        } else if (type.compareTo("circle") == 0) {
-            o = new Circle(str);
+        // On passe le premier caractère en majuscule
+        type = type.substring(0, 1).toUpperCase() + type.substring(1);
+
+        // on cree un objet Class
+        Class classe;
+        try {
+            // on récupère le type de l'objet que l'on souhaite instancier
+            classe = Class.forName("org.ulco."+ type);
+
+            // on crée les paramètres du constucteur
+            Class[] parametres = new Class[]{String.class};
+
+            // on crée le constructeur
+            Constructor ct = classe.getConstructor(parametres);
+
+            // on crée notre nouvel objet
+            o = (GraphicsObject)ct.newInstance(new String[]{str});
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+
+
         return o;
     }
 
