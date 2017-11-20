@@ -13,8 +13,15 @@ public class Layer {
         String str = json.replaceAll("\\s+","");
         int objectsIndex = str.indexOf("objects");
         int endIndex = str.lastIndexOf("}");
+        int groupsIndex = str.indexOf("groups");
 
-        parseObjects(str.substring(objectsIndex + 9, endIndex - 1));
+
+        if(groupsIndex >0){
+            parseGroups(str.substring(groupsIndex+8, endIndex -1));
+            parseObjects(str.substring(objectsIndex + 9, endIndex - 1));
+        }else {
+            parseObjects(str.substring(objectsIndex + 9, endIndex - 1));
+        }
     }
 
     public void add(GraphicsObject o) {
@@ -51,6 +58,26 @@ public class Layer {
             }
         }
     }
+
+    private void parseGroups(String groupsStr) {
+        while (!groupsStr.isEmpty()) {
+            int separatorIndex = searchSeparator(groupsStr);
+            String groupStr;
+
+            if (separatorIndex == -1) {
+                groupStr = groupsStr;
+            } else {
+                groupStr = groupsStr.substring(0, separatorIndex);
+            }
+            m_list.add(JSON.parseGroup(groupStr));
+            if (separatorIndex == -1) {
+                groupsStr = "";
+            } else {
+                groupsStr = groupsStr.substring(separatorIndex + 1);
+            }
+        }
+    }
+
 
     private int searchSeparator(String str) {
         int index = 0;
