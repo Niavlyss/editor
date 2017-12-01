@@ -5,6 +5,11 @@ import java.util.Vector;
 public class Group extends GraphicsObject{
 
     public boolean isClosed(Point pt, double distance) {
+        for(GraphicsObject obj : m_objectList){
+            if(obj.isClosed(pt,distance)){
+                return true;
+            }
+        }
         return false;
     }
 
