@@ -5,7 +5,7 @@ import java.util.Vector;
 public class Layer {
     public Layer() {
         m_list = new Vector<GraphicsObject>();
-        m_ID = ++ID.ID;
+        m_ID = ID.getInstance().genererNextId();
     }
 
     public Layer(String json) {
@@ -38,6 +38,10 @@ public class Layer {
 
     public int getID() {
         return m_ID;
+    }
+
+    public Vector<GraphicsObject> getObjectList() {
+        return m_list;
     }
 
     private void parseObjects(String objectsStr) {
@@ -104,16 +108,6 @@ public class Layer {
         }
     }
 
-    public GraphicsObjects select(Point pt, double distance) {
-        GraphicsObjects list = new GraphicsObjects();
-
-        for (GraphicsObject object : m_list) {
-            if (object.isClosed(pt, distance)) {
-                list.add(object);
-            }
-        }
-        return list;
-    }
 
     public String toJson() {
         String str = "{ type: layer, objects : { ";
