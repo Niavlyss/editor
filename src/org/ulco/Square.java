@@ -7,13 +7,8 @@ public class Square extends GraphicsObject {
     }
 
     public Square(String json) {
-        String str = json.replaceAll("\\s+","");
-        int centerIndex = str.indexOf("center");
-        int lengthIndex = str.indexOf("length");
-        int endIndex = str.lastIndexOf("}");
-
-        m_origin = new Point(str.substring(centerIndex + 7, lengthIndex - 1));
-        m_length = Double.parseDouble(str.substring(lengthIndex + 7, endIndex));
+        m_origin = JSON.parsePoint(json,"center");
+        m_length = JSON.parseDouble(json,"length","length");
     }
 
     public GraphicsObject copy() {
@@ -28,6 +23,8 @@ public class Square extends GraphicsObject {
         return Math.sqrt((center.getX() - pt.getX()) * (center.getX() - pt.getX()) +
                 ((center.getY() - pt.getY()) * (center.getY() - pt.getY()))) <= distance;
     }
+
+    Point center(){return null;}
 
     void move(Point delta) { m_origin.move(delta); }
 

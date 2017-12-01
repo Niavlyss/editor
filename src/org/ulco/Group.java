@@ -14,19 +14,16 @@ public class Group extends GraphicsObject{
     }
 
     public Group(){
-        m_objectList = new Vector<GraphicsObject>();
+        m_objectList = new Vector<>();
         m_ID = ID.getInstance().genererNextId();
     }
 
     public Group(String json) {
-        m_objectList = new Vector<GraphicsObject>();
-        String str = json.replaceAll("\\s+","");
-        int objectsIndex = str.indexOf("objects");
-        int groupsIndex = str.indexOf("groups");
-        int endIndex = str.lastIndexOf("}");
-
-        parseObjects(str.substring(objectsIndex + 9, groupsIndex - 2));
-        parseGroups(str.substring(groupsIndex + 8, endIndex - 1));
+        Vector<String> separators = new Vector<String>();
+        separators.add("objects");
+        separators.add("groups");
+        separators.add("}");
+        m_objectList = JSON.parseItems(json, separators);
     }
 
     public void add(Object object) {
@@ -43,10 +40,9 @@ public class Group extends GraphicsObject{
     public Group copy() {
         Group g = new Group();
 
-        for (Object o : m_objectList) {
+        for (GraphicsObject o : m_objectList) {
             GraphicsObject element = (GraphicsObject) (o);
-
-            g.addObject(element.copy());
+            g.addObject(o.copy());
         }
         return g;
     }
@@ -56,8 +52,6 @@ public class Group extends GraphicsObject{
     }
 
     public void move(Point delta) {
-        Group g = new Group();
-
         for (Object o : m_objectList) {
             GraphicsObject element = (GraphicsObject) (o);
 
@@ -65,71 +59,13 @@ public class Group extends GraphicsObject{
         }
     }
 
-
-
-    private void parseGroups(String groupsStr) {
-        while (!groupsStr.isEmpty()) {
-            int separatorIndex = searchSeparator(groupsStr);
-            String groupStr;
-
-            if (separatorIndex == -1) {
-                groupStr = groupsStr;
-            } else {
-                groupStr = groupsStr.substring(0, separatorIndex);
-            }
-            m_objectList.add(JSON.parseGroup(groupStr));
-            if (separatorIndex == -1) {
-                groupsStr = "";
-            } else {
-                groupsStr = groupsStr.substring(separatorIndex + 1);
-            }
-        }
-    }
-
-    private void parseObjects(String objectsStr) {
-        while (!objectsStr.isEmpty()) {
-            int separatorIndex = searchSeparator(objectsStr);
-            String objectStr;
-
-            if (separatorIndex == -1) {
-                objectStr = objectsStr;
-            } else {
-                objectStr = objectsStr.substring(0, separatorIndex);
-            }
-            m_objectList.add(JSON.parse(objectStr));
-            if (separatorIndex == -1) {
-                objectsStr = "";
-            } else {
-                objectsStr = objectsStr.substring(separatorIndex + 1);
-            }
-        }
+    Point center(){
+        return null;
     }
 
 
-    private int searchSeparator(String str) {
-        int index = 0;
-        int level = 0;
-        boolean found = false;
 
-        while (!found && index < str.length()) {
-            if (str.charAt(index) == '{') {
-                ++level;
-                ++index;
-            } else if (str.charAt(index) == '}') {
-                --level;
-                ++index;
-            } else if (str.charAt(index) == ',' && level == 0) {
-                found = true;
-            } else {
-                ++index;
-            }
-        }
-        if (found) {
-            return index;
-        } else {
-            return -1;
-        }
-    }
+
 
 
     public int size() {
